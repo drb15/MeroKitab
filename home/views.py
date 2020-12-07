@@ -4,7 +4,7 @@ from django.contrib.auth.forms import UserCreationForm,AuthenticationForm
 from django.contrib.auth import login,authenticate,logout
 from django.contrib.auth.models import User
 from home.models import Product,Contact
-from home.forms import CreateUserForm,AddProductForm,ProfileForm
+from home.forms import CreateUserForm,AddProductForm,ProfileForm,RateForm
 from django.contrib import messages
 
 # Create your views here.
@@ -26,7 +26,6 @@ def addproduct(request):
             
             if form.is_valid:
                 user = form.save(commit=False)
-                print(user)
                 user.posted_by = request.user
                 user.save()
 
@@ -83,12 +82,28 @@ def profile(request):
 
     return render(request,'profile.html')
 
+
 def productDetail(request,pk):
     produc = Product.objects.filter(id=pk)
     context = { 'produc':produc }
 
     return render(request,'prod_details.html',context)
 
+
+def review(request):
+    form = RateForm()
+    if request.user.is_authenticated:
+        if request.method == "POST":
+
+            form = RateForm(request.POST)
+            if form.is_valid:
+                rate = form.save(commit=False)
+                rate.user = request.user
+                rate.save()
+        
+        return render(request,'review.html',{'form': form})
+    else:
+        return redirect('/login')
 
         
         

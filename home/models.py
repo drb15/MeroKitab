@@ -109,3 +109,22 @@ class Contact(models.Model):
     email = models.EmailField()
     phone = models.CharField(max_length=15)
     desc = models.TextField()
+
+
+Rate_Choices = [
+    (1, '1 - Terrible'),
+    (2, '2 - Bad'),
+    (3, '3 - OK'),
+    (4, '4 - Good'),
+    (5, '5 - Very Good'),
+]
+
+class Review(models.Model):
+    user = models.ForeignKey(User, on_delete = models.CASCADE)
+    book = models.ForeignKey(Product, on_delete=models.CASCADE)
+    date = models.DateTimeField(auto_now_add=True)
+    text = models.TextField(max_length=3000, blank=True)
+    rate = models.PositiveSmallIntegerField(choices=Rate_Choices)
+
+    def __str__(self):
+        return self.user.username
